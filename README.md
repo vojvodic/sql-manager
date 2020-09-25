@@ -1,6 +1,6 @@
 ## SQL client for PostgreSQL and MySQL
 
-A sql client that allows you to create server connections for PostgreSQL and MySQL.
+SQL client that allows you to create server connections for PostgreSQL and MySQL.
 It runs on ElectronJS, Node (Express) and Vue 2.
 
 ## Features
@@ -26,3 +26,8 @@ npm install
 # Run the app
 npm start
 ```
+## Examples
+
+![Screenshot](public/examples/example_1.png?raw=true)
+
+![Screenshot](public/examples/example_2.png?raw=true)
