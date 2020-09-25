@@ -1,0 +1,17 @@
+// Fonts
+@import url('https://fonts.googleapis.com/css?family=Nunito');
+
+// Bootstrap required
+@import "node_modules/bootstrap/scss/functions";
+@import "node_modules/bootstrap/scss/variables";
+@import "node_modules/bootstrap/scss/mixins";
+
+@import "variables";
+@import "node_modules/bootstrap/scss/bootstrap";
+
+#app {
+    width: 100%;
+    margin: 0px;
+    padding: 0px;
+    font-size: 14px;
+}

@@ -1,0 +1,46 @@
+{
+  "name": "sql-manager",
+  "version": "1.0.0",
+  "description": "SQL Manager",
+  "main": "main.js",
+  "nodemonConfig": {
+      "ignore": ["storage/*","resources/*"],
+      "delay": "500"
+  },
+  "scripts": {
+    "start": "electron .",
+    "dev": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "watch": "npm run dev -- --watch",
+    "watch-poll": "npm run watch -- --watch-poll"
+  },
+  "repository": "https://github.com/vojvodic/sql-manager",
+  "keywords": [
+    "SQL Client",
+    "MySQL",
+    "PostgreSQL"
+  ],
+  "author": "Marko Vojvodic",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^9.0.3",
+    "resolve-url-loader": "^3.1.0",
+    "sass": "^1.26.8",
+    "sass-loader": "^8.0.2",
+    "vue-template-compiler": "^2.6.11"
+  },
+  "dependencies": {
+    "@popperjs/core": "^2.4.2",
+    "axios": "^0.19.2",
+    "bootstrap": "^4.5.0",
+    "codemirror": "^5.55.0",
+    "cross-env": "^7.0.2",
+    "express": "^4.17.1",
+    "json2csv": "^5.0.1",
+    "laravel-mix": "^5.0.4",
+    "mysql": "^2.18.1",
+    "pg": "^8.2.1",
+    "vue": "^2.6.11",
+    "vue-js-modal": "^2.0.0-rc.6"
+  }
+}

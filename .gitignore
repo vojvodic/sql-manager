@@ -1,0 +1,5 @@
+node_modules
+mix-manifest.js
+npm-debug.log
+yarn-error.log
+public/mix-manifest.json

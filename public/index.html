@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link href="fontawesome/css/all.min.css" type="text/css" rel="stylesheet" />
+		<link href="css/app.css" type="text/css" rel="stylesheet" />
+	</head>
+	<body>
+		<div id="app">
+			<root></root>
+		</div>
+		<script src="js/app.js"></script>
+		<script type="text/javascript">
+		  const electronRemote = require('electron').remote;
+		  document.addEventListener("keydown", function (e) {
+			if (e.which === 123) {
+			  electronRemote.getCurrentWindow().toggleDevTools();
+			} else if (e.which === 116) {
+			  if (confirm('Reload SQL Manager?')) {
+				location.reload();
+			  }
+			}
+		  });
+		</script>
+	</body>
+</html>
