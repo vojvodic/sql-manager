@@ -26,7 +26,7 @@ npm install
 # Run the app
 npm start
 ```
-## Examples
+## UI Examples
 
 ![Screenshot](public/examples/example_1.png?raw=true)
 
