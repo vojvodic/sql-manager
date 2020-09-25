@@ -12,6 +12,9 @@ It runs on ElectronJS, Node (Express) and Vue 2.
 - SQL history - Check SQL history for each server you have created.
 - Scripts - In query tab easily access table statements INSERT, UPDATE, DELETE.
 
+## Things to know
+- PostgreSQL navigation doesn't include schemas and by default public schema is shown for each database, including schemas into navigation is something on TODO list.
+
 ## Installation
 
 From your command line:
