@@ -1,5 +1,5 @@
 const server = require('./server');
-server.start(function( expresServer ) {
+server.start( function( expressServer ) {
 
   /**
   * Server is running at this moment
@@ -26,15 +26,14 @@ server.start(function( expresServer ) {
 	  backgroundColor: "#2d3a46",
 	  center: true,
 	  webPreferences: {
+		devTools: false,
 		nodeIntegration: true,
 		enableRemoteModule: true
 	  }
 	});
 
+	// Load URL
 	mainWindow.loadURL(server.url + ':' + server.port);
-
-	// Open window with dev tools opened
-	// mainWindow.webContents.openDevTools();
 
 	// Make the window full screen
 	mainWindow.maximize();
@@ -62,7 +61,7 @@ server.start(function( expresServer ) {
 	  app.quit();
 	}
 
-	// Shutdown server - close expresServer instance
-	expresServer.close();
+	// Shutdown server - close expressServer instance
+	expressServer.close();
   });
 });
