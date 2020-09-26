@@ -22,7 +22,7 @@ server.start(function( expresServer ) {
 	mainWindow = new BrowserWindow({
 	  width : 1100,
 	  height: 600,
-	  icon: path.join(__dirname, 'public/icon/ms-icon-310x310.png'),
+	  icon: path.join(__dirname, 'public/icon/icon-310x310.png'),
 	  backgroundColor: "#2d3a46",
 	  center: true,
 	  webPreferences: {
