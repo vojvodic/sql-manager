@@ -126,11 +126,15 @@ export default {
 	}
   },
   mounted: function() {
-	this.startCodeMirrorEditor();
-
 	let self = this;
 	this.$refs.sqlResultsReference.addEventListener('scroll', function() {
 	  self.resultsScrollTop = this.scrollTop;
+	});
+
+	this.startCodeMirrorEditor(() => {
+	  if (this.tab.params && this.tab.params.editorSQL) {
+		this.appendSqlToEditor({'sql' : this.tab.params.editorSQL});
+	  }
 	});
 
 	if (this.tab.params && this.tab.params.runSQL) {
@@ -141,7 +145,7 @@ export default {
 	}
   },
   methods: {
-	runSQL( init = {} ) {
+	async runSQL( init = {} ) {
 	  // Process params present in init
 	  let settings = {};
 
@@ -163,6 +167,15 @@ export default {
 		return;
 	  }
 
+	  // if (settings.sql.includes(";")) {
+		// settings.sql.split(";").forEach((query) => {
+		//   if(query.trim() != ""){
+		// 	this.runSQL({sql:query});
+		//   }
+		// });
+		// return false;
+	  // }
+
 	  // Reset results
 	  this.clearSQLresults();
 
@@ -177,7 +190,7 @@ export default {
 
 	  this.awaitingSQLresponse = true;
 	  this.resultsQuery = data.query;
-	  axios.post('/servers/' + this.tab.server.server_id + '/run-sql', data).then((response) => {
+	  await axios.post('/servers/' + this.tab.server.server_id + '/run-sql', data).then((response) => {
 		if (response.data.rows && response.data.rows.length) {
 		  this.results = response.data.rows;
 		} else if (response.data.hasOwnProperty('affectedRows')) {
@@ -222,13 +235,14 @@ export default {
 
 	  setTimeout(() => {
 		this.codeMirrorEditor.refresh();
+		this.saveTabPreferences();
 	  },500);
 
 	  if (scrollInfo && scrollInfo.hasOwnProperty('left') && scrollInfo.hasOwnProperty('top')) {
 		this.codeMirrorEditor.scrollTo(scrollInfo.left,scrollInfo.top);
 	  }
 	},
-	startCodeMirrorEditor() {
+	startCodeMirrorEditor( codeMirrorStarted ) {
 	  this.codeMirrorEditor = CodeMirror.fromTextArea(this.$refs.sqlEditorReference,{
 		mode : 'text/x-mariadb',
 		indentWithTabs: true,
@@ -243,6 +257,10 @@ export default {
 		  }
 		}
 	  });
+	  this.codeMirrorEditor.on("blur", (event) => {
+		this.saveTabPreferences()
+	  });
+	  codeMirrorStarted();
 	},
 	saveResults() {
 	  let options = {
@@ -275,6 +293,22 @@ export default {
 		  });
 		}
 	  });
+	},
+	saveTabPreferences(){
+	  let tabPreferences = this.preferences.tabs;
+	  tabPreferences[this.tab.tab_id] = this.tab;
+	  tabPreferences[this.tab.tab_id]['params']['editorSQL'] = this.codeMirrorEditor.getValue();
+	  tabPreferences[this.tab.tab_id]['params']['runSQL'] = '';
+	  this.$emit('update-preferences',{'tabs' : tabPreferences});
+	}
+
+
+  },
+  watch: {
+	'tab.active': function(active){
+	  if(active){
+		this.codeMirrorEditor.refresh();
+	  }
 	}
   }
 }

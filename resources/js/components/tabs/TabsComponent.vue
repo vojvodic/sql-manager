@@ -71,14 +71,16 @@ export default {
 	  tabWidthTimeout: null
 	}
   },
+  mounted: function(){
+	this.updateTabs();
+  },
   methods: {
 	showTab: function(tab){
 	  this.$emit('show-tab',{'tab_id' : tab.tab_id});
 	  this.$emit('update-app-title',{'title' : tab.name});
-	}
-  },
-  watch: {
-	tabs: function(tabs) {
+	  this.updateTabPreferences(tab);
+	},
+	updateTabs: function(){
 	  if (this.tabs.length > 1) {
 		this.tabWidth = 100 / this.tabs.length;
 	  } else {
@@ -89,12 +91,23 @@ export default {
 		this.tabs.forEach((tab, i) => {
 		  if (tab.active) {
 			this.$emit('update-app-title',{'title' : tab.name});
+			this.updateTabPreferences(tab);
 			return false;
 		  }
 		});
 	  } else {
 		this.$emit('update-app-title',{'title' : ''});
 	  }
+	},
+	updateTabPreferences(tab){
+	  let tabPreferences = this.preferences.tabs;
+	  tabPreferences[tab.tab_id] = tab;
+	  this.$emit('update-preferences',{'tabs' : tabPreferences});
+	}
+  },
+  watch: {
+	tabs: function() {
+	  this.updateTabs();
 	}
   }
 }

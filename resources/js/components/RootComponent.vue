@@ -115,6 +115,33 @@ export default {
 		this.preferences = response.data.preferences;
 		this.servers = response.data.servers;
 		this.settings = response.data.settings;
+
+		let preferencesNavigation = false;
+		let preferencesTabs = false;
+		if(typeof this.preferences == 'object' && this.preferences.hasOwnProperty('navigation') && Object.keys(this.preferences.navigation).length > 0){
+		  preferencesNavigation = true;
+		}
+		if (typeof this.preferences == 'object' && this.preferences.hasOwnProperty('tabs') && Object.keys(this.preferences.tabs).length > 0) {
+		  preferencesTabs = true;
+		}
+
+		let appReloding = localStorage.getItem('appReloding');
+		if((preferencesNavigation || preferencesTabs) && (appReloding == "true" || confirm('You have navigation links or tabs already present in cache.\n\n Load from cache?'))){
+		  if(preferencesTabs){
+			for(let tab_id in this.preferences.tabs){
+			  this.tabs.push(this.preferences.tabs[tab_id]);
+			}
+		  }
+		} else{
+		  this.preferences.navigation = {};
+		  this.preferences.tabs = {};
+		  this.updatePreferences();
+		}
+
+		if(appReloding){
+		  localStorage.removeItem('appReloding');
+		}
+
 		this.appReady = true;
 	  }).catch(error => {
 		alert( error );
@@ -193,14 +220,18 @@ export default {
 	  }
 	  tab.active = true;
 	  this.tabs.push(tab);
+	  this.preferences.tabs[tab.tab_id] = tab;
+	  this.updatePreferences();
 	},
 	showTab(event) {
 	  for (let i = 0; i < this.tabs.length; i++) {
-		if (this.tabs[i]['tab_id'] == event.tab_id) {
-		  this.tabs[i].active = true;
+		let tab = this.tabs[i];
+		if (tab.tab_id == event.tab_id) {
+		  tab.active = true;
 		} else{
-		  this.tabs[i].active = false;
+		  tab.active = false;
 		}
+		this.$set(this.tabs, i, tab);
 	  }
 	},
 	removeTab(event) {
@@ -214,7 +245,14 @@ export default {
 			  this.tabs[i - 1].active = true;
 			}
 		  }
+		  // Remove tab from tabs
 		  this.$delete(this.tabs, i);
+
+		  // Delete tab from tab preferences
+		  if(this.preferences.tabs[event.tab_id]){
+			delete this.preferences.tabs[event.tab_id];
+		  }
+		  this.updatePreferences();
 		  break;
 		}
 	  }
@@ -230,16 +268,19 @@ export default {
 	  });
 	},
 	updatePreferences: function(preferences){
-	  let changed = false;
-	  for (let key in preferences) {
-		if(this.preferences.hasOwnProperty(key)){
-		  changed = true;
-		  this.$set(this.preferences, key, preferences[key]);
+	  if(typeof preferences == 'object'){
+		//TODO:: Do hard check and compare if objects are the same
+		let changed = false;
+		for (let key in preferences) {
+		  if(this.preferences.hasOwnProperty(key)){
+			changed = true;
+			this.$set(this.preferences, key, preferences[key]);
+		  }
 		}
-	  }
 
-	  if(!changed) {
-		return false;
+		if(!changed) {
+		  return false;
+		}
 	  }
 
 	  clearTimeout(this.updatePreferencesTimeout);
@@ -297,10 +338,12 @@ export default {
 	  document.title = 'SQL Manager' + (append != '' ? " - "  + append : '');
 	},
 	closeApp: function(event) {
-	  this.preferences.navigation = {};
-	  // Clear navigation cache
+	  // Clear navigation and tabs cache
 	  // Await for data to be saved since calling electron window close will shut down express server
 	  // Ignore any error and just close app once response is received
+
+	  this.preferences.navigation = {};
+	  this.preferences.tabs = {};
 	  axios.post('preferences/save',{'preferences' : this.preferences}).finally(() => {
 		electronRemote.getCurrentWindow().close();
 	  });

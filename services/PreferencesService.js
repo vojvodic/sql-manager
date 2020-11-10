@@ -18,8 +18,10 @@ module.exports = class PreferencesService {
 	  navigationWidth: 350,
 
 	  // Track user navigation - which servers, databases, columns are active or not
-	  // TODO: Maybe rename this to navigationCache
 	  navigation: {},
+
+	  // Track opened tabs
+	  tabs: {},
 
 	  // Default path for saving files with results
 	  saveFileResultsPath: "/results.csv",

@@ -1,7 +1,7 @@
 <template>
   <div class="sql-scripts app-overflow-scroll">
 	  <ul class="list-unstyled">
-		<li class="sql-script-entry">
+		<li class="sql-script-entry" v-if="viewDefinition != ''">
 		  <div>
 			<a href="javascript:;" v-on:click="appendViewDefinition()" title="Append SQL to Editor">
 			  <i class="fa fa-edit"></i>
@@ -23,18 +23,22 @@ export default {
   },
   data : function() {
 	return {
-	  viewDefinition: 'dsadasda'
+	  viewDefinition: ''
 	}
   },
   created: function(){
-	axios.get('/servers/' + this.server.server_id + '/database/' + this.database.database_name + '/tables/' + this.table.name + '/view-definition')
-		 .then(response => {
-			this.viewDefinition = response.data;
-		 }).catch(error => {
-			if(error.response) {
-			  this.$emit('show-alert', { type : 'responseError', response : error.response });
-			}
-		 });
+	if(this.server.driver == 'mysql' && this.database.database_name.toLowerCase() == 'information_schema'){
+	  alert("MySQL system view");
+	} else{
+	  axios.get('/servers/' + this.server.server_id + '/database/' + this.database.database_name + '/tables/' + this.table.name + '/view-definition')
+		   .then(response => {
+			  this.viewDefinition = response.data;
+		   }).catch(error => {
+			  if(error.response) {
+				this.$emit('show-alert', { type : 'responseError', response : error.response });
+			  }
+		   });
+	}
   },
   methods: {
 	appendViewDefinition: function(script){

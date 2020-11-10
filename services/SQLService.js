@@ -42,6 +42,7 @@ module.exports = class SQLService {
 	if (this.server.driver == 'mysql') {
 	  this.serverConnection.dateStrings = true; // Return date, timestamp, timestamptz as strings from MySQL DB not java script objects
 	  this.serverConnection.supportBigNumbers = true;
+	  this.serverConnection.multipleStatements = true;
 	  this.connection = require('mysql').createConnection(this.serverConnection);
 	} else if (this.server.driver == 'pgsql') {
 	  const { Client, types } = require('pg');
@@ -137,12 +138,27 @@ module.exports = class SQLService {
 		  reject(error);
 		  return;
 		}
-		this.connection.query(this.query, (error, rows, fields) => {
+		this.connection.query(this.query, (error, responseRows, responseFields) => {
 		  this.connection.destroy();
 		  if (error) {
 			error.status = 400;
 			reject( error );
 		  } else {
+			let lastStatementIndex = null;
+			if(responseRows instanceof Array && responseRows.length){
+			  responseRows.forEach((statement) => {
+				if(statement instanceof Array){
+				  lastStatementIndex = responseRows.length - 1;
+				  return;
+				} else if(statement instanceof Object && statement.hasOwnProperty('affectedRows')) {
+				  lastStatementIndex = responseRows.length - 1;
+				  return;
+				}
+			  });
+			}
+
+			let rows = lastStatementIndex != null ? responseRows[lastStatementIndex] : responseRows;
+			let fields = lastStatementIndex != null ? responseFields[lastStatementIndex] : responseFields;
 			let resolved = {};
 			resolved['executionTime'] = Number((new Date().getTime() - preQueryTime) / 1000).toFixed(3);
 			if (rows instanceof Array) {
@@ -168,12 +184,14 @@ module.exports = class SQLService {
 		this.connection.connect(function(error){
 		  if(error) reject(error);
 		});
-		this.connection.query(this.query, (error, response) => {
+		this.connection.query(this.query, (error, pgResponse) => {
 		  this.connection.end();
 		  if (error) {
 			error.status = 400;
 			reject( error );
 		  } else {
+			let response = pgResponse instanceof Array ? pgResponse[pgResponse.length - 1] : pgResponse;
+
 			let resolved = {};
 			resolved['executionTime'] = Number((new Date().getTime() - preQueryTime) / 1000).toFixed(3);
 			if (response.command && ['insert','update','delete'].includes(response.command.toLowerCase())) {
