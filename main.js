@@ -26,7 +26,7 @@ server.start( function( expressServer ) {
 	  backgroundColor: "#2d3a46",
 	  center: true,
 	  webPreferences: {
-		devTools: true,
+		devTools: false,
 		nodeIntegration: true,
 		enableRemoteModule: true
 	  }

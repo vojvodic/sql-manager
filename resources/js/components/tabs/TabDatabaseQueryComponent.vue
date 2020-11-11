@@ -119,10 +119,7 @@ export default {
 	  fields           : [],
 	  resultsScrollTop : 0,
 	  codeMirrorEditor : null,
-	  affectedRows     : null,
-	  sqlSuggestions: {
-		tables: {}
-	  }
+	  affectedRows     : null
 	}
   },
   mounted: function() {
@@ -145,7 +142,7 @@ export default {
 	}
   },
   methods: {
-	async runSQL( init = {} ) {
+	runSQL( init = {} ) {
 	  // Process params present in init
 	  let settings = {};
 
@@ -167,15 +164,6 @@ export default {
 		return;
 	  }
 
-	  // if (settings.sql.includes(";")) {
-		// settings.sql.split(";").forEach((query) => {
-		//   if(query.trim() != ""){
-		// 	this.runSQL({sql:query});
-		//   }
-		// });
-		// return false;
-	  // }
-
 	  // Reset results
 	  this.clearSQLresults();
 
@@ -190,7 +178,7 @@ export default {
 
 	  this.awaitingSQLresponse = true;
 	  this.resultsQuery = data.query;
-	  await axios.post('/servers/' + this.tab.server.server_id + '/run-sql', data).then((response) => {
+	  axios.post('/servers/' + this.tab.server.server_id + '/run-sql', data).then((response) => {
 		if (response.data.rows && response.data.rows.length) {
 		  this.results = response.data.rows;
 		} else if (response.data.hasOwnProperty('affectedRows')) {

@@ -126,7 +126,7 @@ export default {
 		}
 
 		let appReloding = localStorage.getItem('appReloding');
-		if((preferencesNavigation || preferencesTabs) && (appReloding == "true" || confirm('You have navigation links or tabs already present in cache.\n\n Load from cache?'))){
+		if((preferencesNavigation || preferencesTabs) && (appReloding == "true" || confirm('Load from cache?'))){
 		  if(preferencesTabs){
 			for(let tab_id in this.preferences.tabs){
 			  this.tabs.push(this.preferences.tabs[tab_id]);
