@@ -7,7 +7,7 @@
 		</button>
 		<div class="app-alert-body">
 		  <i class="fa"  v-bind:class="alert.icon" v-show="alert.icon != ''"></i>
-		  {{ alert.message }}
+		  {{ alert.message.trim() }}
 		</div>
 	  </div>
 	</transition>
@@ -520,21 +520,23 @@ export default {
 
   .app-alert {
 	position: absolute;
-	top: 55px;
-	right: 10px;
-	min-width: 200px;
+	top: 65px;
+	right: 15px;
+	min-width: 300px;
 	z-index: 99999;
 	box-shadow: 0px 1px 5px -2px rgba(0,0,0,0.75);
-	padding: 7px;
+	padding: 10px;
   }
 
   .app-alert .app-alert-body {
-	padding: 15px 2px 5px 2px;
-	font-size: 110%;
+	padding: 20px 2px 5px 2px;
+	font-size: 115%;
+	letter-spacing: 0.2px;
   }
 
   .app-alert .fa {
 	margin-right: 5px;
+	font-size: 120%;
   }
 
   .slide-fade-enter-active {
