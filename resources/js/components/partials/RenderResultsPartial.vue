@@ -42,7 +42,8 @@ export default {
 	  headers: [],
 	  startIndex: 0,
 	  endIndex: 49,
-	  columnResizerBuffer: {} // Keep reference to header that is resizing as well as inital offset from left
+	  columnResizerBuffer: {}, // Keep reference to header that is resizing as well as inital offset from left
+	  renderResultsTimeout: 0
 	}
   },
   created: async function(){
@@ -59,9 +60,9 @@ export default {
 	if (this.startIndex != 0) {
 	  for (let index in this.visibleResults) {
 		if( Number(index) < (this.startIndex - 10) ){
-		  delete(this.visibleResults[index]);
+		  this.$delete(this.visibleResults, index);
 		} else if( Number(index) > (this.endIndex + 50) ) {
-		  delete(this.visibleResults[index]);
+		  this.$delete(this.visibleResults, index);
 		}
 	  }
 	}
@@ -143,8 +144,8 @@ export default {
 		  }
 		}
 
-		if (!this.visibleResults[i]) {
-		  this.visibleResults[i] = this.results[i];
+		if (!this.visibleResults.hasOwnProperty(i)) {
+		  this.$set(this.visibleResults, i, this.results[i]);
 		}
 	  }
 	},
@@ -191,7 +192,8 @@ export default {
   watch: {
 	resultsScrollTop: function() {
 	  // During scroll rerender results based on offset from top
-	  this.renderResults();
+	  clearTimeout(this.renderResultsTimeout);
+	  this.renderResultsTimeout = setTimeout( () => { this.renderResults(); }, 340);
 	}
   }
 }
